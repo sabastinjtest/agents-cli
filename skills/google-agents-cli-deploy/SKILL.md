@@ -12,7 +12,7 @@ description: >
 metadata:
   author: Google
   license: Apache-2.0
-  version: 0.2.1
+  version: 0.3.0
   requires:
     bins:
       - agents-cli
@@ -60,9 +60,9 @@ Choose the right deployment target based on your requirements:
 
 > **Product name mapping:** "Agent Engine" / "Vertex AI Agent Engine" is now **Agent Runtime**. Use `--deployment-target agent_runtime`.
 
-> **Ambient / scheduled / event-driven agents:** Agent Runtime does not support Pub/Sub, Eventarc, or Cloud Scheduler triggers. Use **Cloud Run** (recommended) or **GKE** for these workloads. See `/google-agents-cli-adk-code` Section 12 for the `trigger_sources` pattern.
+> **Ambient / scheduled / event-driven agents:** Agent Runtime does not support Pub/Sub, Eventarc, or Cloud Scheduler triggers. Use **Cloud Run** (recommended) or **GKE** for these workloads. See `/google-agents-cli-adk-code` (`references/adk-python.md`, section "12. Event-Driven / Ambient Agents") for the `trigger_sources` pattern.
 
-> **OAuth / user consent agents:** Use **Agent Runtime** with Gemini Enterprise for agents that need OAuth 2.0 user consent (e.g., accessing Google Drive, Calendar, or other user-scoped APIs). Cloud Run does not currently support managed OAuth flows. See the `adk-ae-oauth` sample in `/google-agents-cli-workflow` Phase 2.
+> **OAuth / user consent agents:** Use **Agent Runtime** with Gemini Enterprise for agents that need OAuth 2.0 user consent (e.g., accessing Google Drive, Calendar, or other user-scoped APIs). Cloud Run does not currently support managed OAuth flows. See the `adk-ae-oauth` sample in `/google-agents-cli-workflow` Phase 1.
 
 ---
 
@@ -136,7 +136,7 @@ For the full CI/CD pipeline setup guide — prerequisites, `infra cicd` flags, r
 
 For detailed infrastructure configuration (scaling defaults, Dockerfile, FastAPI endpoints, session types, networking), see `references/cloud-run.md`. For ADK docs on Cloud Run deployment, fetch `https://adk.dev/deploy/cloud-run/index.md`.
 
-For event-driven / ambient agent deployment on Cloud Run, see the [`ambient-expense-agent`](https://github.com/google/adk-samples/tree/main/python/agents/ambient-expense-agent) sample and `/google-agents-cli-adk-code` for the `trigger_sources` pattern.
+For event-driven / ambient agent deployment on Cloud Run, see the [`ambient-expense-agent`](https://github.com/google/adk-samples/tree/main/python/agents/ambient-expense-agent) sample and `/google-agents-cli-adk-code` (`references/adk-python.md`, section "12. Event-Driven / Ambient Agents") for the `trigger_sources` pattern.
 
 ---
 
@@ -262,7 +262,7 @@ For advanced testing (custom headers, session reuse, scripting, load tests), see
 
 ## Deploying with a UI (IAP)
 
-IAP (Identity-Aware Proxy) secures a Cloud Run service so only authorized Google accounts can access it. Support for IAP deployment via `agents-cli deploy` is planned for a future release.
+IAP (Identity-Aware Proxy) secures a Cloud Run service so only authorized Google accounts can access it. Enable it by adding the `--iap` flag when deploying (Cloud Run only): `agents-cli deploy --iap`.
 
 For Agent Runtime with a custom frontend, use a **decoupled deployment** — deploy the frontend separately to Cloud Run or Cloud Storage, connecting to the Agent Runtime backend API.
 
@@ -336,7 +336,7 @@ For registering deployed agents with Gemini Enterprise, see `/google-agents-cli-
 
 - `/google-agents-cli-workflow` — Development workflow, coding guidelines, and operational rules
 - `/google-agents-cli-adk-code` — ADK Python API quick reference for writing agent code
-- `/google-agents-cli-eval` — Evaluation methodology, evalset schema, and the eval-fix loop
+- `/google-agents-cli-eval` — Evaluation methodology, dataset schema, and the eval-fix loop
 - `/google-agents-cli-scaffold` — Project creation and enhancement with `agents-cli scaffold create` / `scaffold enhance`
 - `/google-agents-cli-observability` — Cloud Trace, logging, BigQuery Analytics, and third-party integrations
 - `/google-agents-cli-publish` — Gemini Enterprise registration

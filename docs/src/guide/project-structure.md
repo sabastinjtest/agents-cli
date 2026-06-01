@@ -21,9 +21,9 @@ my-agent/
 │
 ├── tests/
 │   ├── eval/                     # Evaluation test cases
-│   │   ├── evalsets/
-│   │   │   └── basic.evalset.json    # Default eval cases
-│   │   └── eval_config.json          # LLM-as-judge criteria
+│   │   ├── datasets/
+│   │   │   └── basic-dataset.json    # Default eval cases
+│   │   └── eval_config.yaml          # Evaluation metrics configuration
 │   ├── integration/
 │   │   └── test_agent.py         # Integration test (runs agent end-to-end)
 │   └── unit/
@@ -118,7 +118,7 @@ create_params:
 - **`agent_directory`** — tells `agents-cli` commands where your agent code is.
 - **`create_params`** — records how the project was created. Used by `agents-cli scaffold upgrade` to preserve your configuration.
 
-### `tests/eval/evalsets/basic.evalset.json`
+### `tests/eval/datasets/basic-dataset.json`
 
 Default evaluation cases. Each case defines a user message and the session context for running it. See the [Evaluation Guide](evaluation.md) for the full schema.
 

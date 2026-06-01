@@ -14,7 +14,7 @@ Agents CLI bundles **7 skills** that give your coding agent deep knowledge acros
 | `google-agents-cli-workflow` | Development lifecycle, code preservation, model selection |
 | `google-agents-cli-adk-code` | ADK Python API — agents, tools, orchestration, callbacks |
 | `google-agents-cli-scaffold` | Project scaffolding — `create`, `enhance`, `upgrade` |
-| `google-agents-cli-eval` | Evaluation — metrics, evalsets, LLM-as-judge |
+| `google-agents-cli-eval` | Evaluation lifecycle — datasets, metrics, generate/grade, compare, analyze, optimize |
 | `google-agents-cli-deploy` | Deployment — Agent Runtime, Cloud Run, GKE, CI/CD |
 | `google-agents-cli-publish` | Gemini Enterprise registration |
 | `google-agents-cli-observability` | Cloud Trace, logging, third-party integrations |

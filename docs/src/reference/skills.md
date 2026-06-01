@@ -23,7 +23,7 @@ Covers deployment workflows, service accounts, rollback, and production infrastr
 
 ## `google-agents-cli-eval`
 
-Covers eval metrics, evalset schema, LLM-as-judge, tool trajectory scoring, and common failure causes. Part of the Google ADK (Agent Development Kit) skills suite.
+Covers the full evaluation lifecycle: dataset schema, generating traces and grading them, comparing runs, analyzing failure clusters, discovering metrics, prompt optimization, LLM-as-judge configuration, and common failure causes. Part of the Google ADK (Agent Development Kit) skills suite.
 
 ---
 

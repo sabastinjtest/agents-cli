@@ -37,23 +37,23 @@ The loop expands to eight phases when you walk through it slowly. Each phase has
 
 | # | Phase | What it does | CLI verb | Skill | Deep-dive |
 |---|---|---|---|---|---|
-| 0 | **Spec** | Write a `DESIGN_SPEC.md`. The other phases derive from this. | — | `google-agents-cli-workflow` | [Development Guide](development.md) |
+| 0 | **Spec** | Write a `.agents-cli-spec.md`. The other phases derive from this. | — | `google-agents-cli-workflow` | [Development Guide](development.md) |
 | 1 | **Scaffold** | Turn the spec into a production-shaped project (~72 files). | `scaffold create` | `google-agents-cli-scaffold` | [Templates](templates.md) |
 | 2 | **Build** | Write the agent body — model, instruction, tools, `App` wrapper. | — | `google-agents-cli-adk-code` | [Project Structure](project-structure.md) |
 | 3 | **Orchestrate** | Compose specialists when one agent grows into a team. | — | `google-agents-cli-adk-code` | [Project Structure](project-structure.md) |
-| 4 | **Evaluate** | Score the agent against an evalset before every deploy. | `eval run` | `google-agents-cli-eval` | [Evaluation](evaluation.md) |
+| 4 | **Evaluate** | Score the agent against a dataset before every deploy. | `eval generate`, `eval grade`, plus `eval dataset synthesize`, `eval compare`, `eval analyze`, `eval metric list`, and `eval optimize` | `google-agents-cli-eval` | [Evaluation](evaluation.md) |
 | 5 | **Deploy** | Ship to Agent Runtime, Cloud Run, or GKE. | `deploy` | `google-agents-cli-deploy` | [Deployment](deployment.md) |
 | 6 | **Publish** | Register with Gemini Enterprise so other agents can find this one. | `publish` | `google-agents-cli-publish` | [CI/CD](cicd.md) |
-| 7 | **Observe** | Cloud Trace + BigQuery analytics; production data feeds tomorrow's evalset. | — | `google-agents-cli-observability` | [Observability](observability/index.md) |
+| 7 | **Observe** | Cloud Trace + BigQuery analytics; production data feeds tomorrow's dataset. | — | `google-agents-cli-observability` | [Observability](observability/index.md) |
 
 ### 0 · Spec
 
-A `DESIGN_SPEC.md` names the agent's tools, constraints, and success criteria. The whole rest of the lifecycle reads from it: the scaffold flags, the eval rubrics, the safety guardrails, the trace attributes you'll watch in production. Don't start from blank — browse [Agent Garden](https://cloud.google.com/products/agent-garden) for an existing template close to what you want, then customize.
+A `.agents-cli-spec.md` names the agent's tools, constraints, and success criteria. The whole rest of the lifecycle reads from it: the scaffold flags, the eval rubrics, the safety guardrails, the trace attributes you'll watch in production. Don't start from blank — browse [Agent Garden](https://cloud.google.com/products/agent-garden) for an existing template close to what you want, then customize.
 
 A typical spec is one screen of markdown:
 
 ```markdown
-# DESIGN_SPEC.md — outage-recovery-bot
+# .agents-cli-spec.md — outage-recovery-bot
 
 ## Tools
 
@@ -130,15 +130,15 @@ When the team needs to span processes — or call agents your team doesn't own �
 
 ### 4 · Evaluate
 
-This is the phase most agent demos skip. `agents-cli eval run` can execute your evalset against the live agent, ask an LLM judge to score each response against a rubric, and give you a number you can defend.
+This is the phase most agent demos skip. `agents-cli eval generate` followed by `agents-cli eval grade` can execute your dataset against the live agent, ask an LLM judge to score each response against a rubric, and give you a number you can defend.
 
 <div id="lifecycle-anim-eval" class="lifecycle-anim" aria-label="Eval-fix loop — click 'apply fix' to see one case flip from failing to passing"></div>
 
-Expect 5–10+ iterations of this loop. Every fix nudges the score, you re-run, you ship when it crosses the threshold. Below: the four failure modes the rubrics catch most often.
+Expect 5–10+ iterations of the `agents-cli eval grade` loop. Every fix nudges the score, you re-run, you ship when it crosses the threshold. Below: the four failure modes the rubrics catch most often.
 
 <div id="lifecycle-anim-failures" class="lifecycle-anim" aria-label="Common agent failures and the eval rubric that catches each"></div>
 
-See the [Evaluation Guide](evaluation.md) for the full schema and rubric reference.
+See the [Evaluation Guide](evaluation.md) for metrics, dataset schemas, and the full methodology.
 
 ### 5 · Deploy
 
@@ -176,7 +176,7 @@ Once the agent is live, every invocation emits a Cloud Trace span. Every tool ca
 
 Observability is essential for any agent running in production, as it helps you catch regressions your evaluation might have missed, cost spikes from chatty tools, or cases where users bypass safety prompts. With `--bq-analytics` turned on at scaffold time, every prompt and response also lands in BigQuery for offline analysis.
 
-The same data closes the loop: production traffic feeds tomorrow's evalset. Eval scores get re-computed continuously, so regressions surface in days, not months.
+The same data closes the loop: production traffic feeds tomorrow's dataset. Eval scores get re-computed continuously, so regressions surface in days, not months.
 
 <div id="lifecycle-anim-rolling" class="lifecycle-anim" aria-label="Rolling production eval score over the last ten days, with annotated regression and deploy events"></div>
 
@@ -198,11 +198,11 @@ See [Observability](observability/index.md) for the full setup.
 
     Your coding agent will:
 
-    1. Write a `DESIGN_SPEC.md` describing the tools and constraints
+    1. Write a `.agents-cli-spec.md` describing the tools and constraints
     2. Run `agents-cli scaffold create … --agent agentic_rag --deployment-target agent_runtime`
     3. Author the agent body and tools
-    4. Write evalset cases
-    5. Run `agents-cli eval run` and iterate until the score crosses threshold
+    4. Write dataset cases
+    5. Run `agents-cli eval generate` followed by `agents-cli eval grade` and iterate with `eval grade` until the score crosses threshold
     6. Run `agents-cli deploy`
     7. Wire up trace + analytics, hand you the URL
 
@@ -224,7 +224,12 @@ See [Observability](observability/index.md) for the full setup.
     agents-cli playground       # local web playground at :8080
 
     # Phase 4: evaluate
-    agents-cli eval run
+    agents-cli eval dataset synthesize --count 10  # optional: cold-start a dataset
+    agents-cli eval generate
+    agents-cli eval grade                          # repeat until eval score crosses threshold
+    agents-cli eval compare prev.json latest.json  # confirm fixes actually helped
+    agents-cli eval analyze --eval-result latest.json  # cluster remaining failures
+    agents-cli eval optimize                       # optional: auto-tune prompts using eval data
 
     # Phase 5: deploy
     agents-cli deploy --dry-run
@@ -243,7 +248,7 @@ See [Observability](observability/index.md) for the full setup.
 - [Templates](templates.md) — full list of scaffold templates (`adk`, `adk_a2a`, `agentic_rag`, …)
 - [Project Structure](project-structure.md) — what each generated file does
 - [Development Guide](development.md) — day-to-day workflow
-- [Evaluation Guide](evaluation.md) — evalset schema, rubrics, the eval-fix loop
+- [Evaluation Guide](evaluation.md) — dataset schema, the eval-fix loop
 - [Deployment](deployment.md) — per-target walkthroughs
 - [CI/CD & Production](cicd.md) — the full PR-to-prod path
 - [Observability](observability/index.md) — Cloud Trace, BigQuery analytics, third-party tools

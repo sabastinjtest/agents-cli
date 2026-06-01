@@ -32,6 +32,6 @@ Cloud SQL session infrastructure (instance, database, Cloud SQL Unix socket volu
 
 Default ingress is `INGRESS_TRAFFIC_ALL` (public). To restrict, change the `ingress` setting in `service.tf` to `INGRESS_TRAFFIC_INTERNAL_ONLY` (VPC only) or `INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER` (internal + GCLB).
 
-IAP (Identity-Aware Proxy) can be enabled by running `agents-cli deploy` with the appropriate Terraform variable override — for example, setting `iap_enabled = true` in your Terraform configuration adds Google identity authentication without code changes.
+IAP (Identity-Aware Proxy) can be enabled by running `agents-cli deploy --iap` (Cloud Run only), which adds Google identity authentication without code changes. IAP is configured by the deploy flag, not by a generated Terraform variable.
 
 VPC connectors are not configured by default. Add them in custom Terraform if needed for private resource access (see `references/terraform-patterns.md`).

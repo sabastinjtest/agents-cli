@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-05-29
+### Breaking
+- The eval data format changed from ADK `EvalSet` to Vertex AI `EvaluationDataset`. Existing `tests/eval/evalsets/*.evalset.json` files are no longer read by `agents-cli eval generate` and friends. See [Migrating Eval Datasets](docs/src/reference/eval-dataset-migration.md) for the conversion. `scaffold upgrade` now prints a notice when legacy files are detected.
+
+### Eval - Quality Flywheel (preview)
+- Added `eval dataset synthesize` for LLM-driven user-simulation dataset generation.
+- Added `eval generate` to run agent inference over an `EvaluationDataset` and emit traces.
+- Added `eval grade` to score agent traces against built-in or custom metrics.
+- Added `eval submit` to submit an end-to-end cloud-side evaluation run on Vertex AI Eval Service.
+- Added `eval results` to fetch results from a completed cloud evaluation run.
+- Added `eval analyze` for failure-mode analysis over graded results.
+- Added `eval metric list` to discover built-in evaluation metrics.
+- Rewrote the `eval` skill end-to-end to cover the Quality Flywheel workflow (dataset, generate, grade, analyze, optimize).
+
+### Other
+- Minor skills consistency fixes
+
 ## [0.2.1] - 2026-05-28
 - Add --dryrun as an alias for --dry-run
 - Smarter skills installation

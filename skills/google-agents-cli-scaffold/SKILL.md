@@ -12,7 +12,7 @@ description: >
 metadata:
   author: Google
   license: Apache-2.0
-  version: 0.2.1
+  version: 0.3.0
   requires:
     bins:
       - agents-cli
@@ -44,7 +44,7 @@ Use the `agents-cli` CLI to create new ADK agent projects or enhance existing on
 | A2A protocol | `--agent adk_a2a` |
 | Prototype (no deployment) | `--prototype` |
 | Deployment target | `--deployment-target <agent_runtime\|cloud_run\|gke>` |
-| CI/CD runner | `--cicd-runner <github_actions\|cloud_build>` |
+| CI/CD runner | `--cicd-runner <github_actions\|google_cloud_build>` |
 | Session storage | `--session-type <in_memory\|cloud_sql\|agent_platform_sessions>` |
 
 ### Product name mapping
@@ -180,7 +180,7 @@ Use `infra datastore` — **not** `infra single-project`. Both provision the dat
 
 > **Vector Search region:** `vector_search_location` defaults to `us-central1`, separate from `region` (`us-east1`). It sets both the Vector Search collection region and the BQ ingestion dataset region, kept colocated to avoid cross-region data movement. Override per-invocation with `agents-cli data-ingestion --vector-search-location <region>`.
 
-**Verifying your agent works:** Use `agents-cli run "test prompt"` for quick smoke tests, then `agents-cli eval run` for systematic validation. Do NOT write pytest tests that assert on LLM response content — that belongs in eval.
+**Verifying your agent works:** Use `agents-cli run "test prompt"` for quick smoke tests, then `agents-cli eval generate` and `agents-cli eval grade` for systematic validation. Do NOT write pytest tests that assert on LLM response content — that belongs in eval.
 
 ---
 
@@ -251,4 +251,4 @@ See `/google-agents-cli-workflow` → **Setup** section.
 - `/google-agents-cli-workflow` — Development workflow, coding guidelines, and the build-evaluate-deploy lifecycle
 - `/google-agents-cli-adk-code` — ADK Python API quick reference for writing agent code
 - `/google-agents-cli-deploy` — Deployment targets, CI/CD pipelines, and production workflows
-- `/google-agents-cli-eval` — Evaluation methodology, evalset schema, and the eval-fix loop
+- `/google-agents-cli-eval` — Evaluation methodology, dataset schema, and the eval-fix loop

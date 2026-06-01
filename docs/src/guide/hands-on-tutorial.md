@@ -46,9 +46,9 @@ my-first-agent/
 │   └── app_utils/        # Telemetry and utility code
 ├── tests/
 │   ├── eval/
-│   │   ├── evalsets/
-│   │   │   └── basic.evalset.json   # Test cases for evaluation
-│   │   └── eval_config.json         # LLM-as-judge criteria
+│   │   ├── datasets/
+│   │   │   └── basic-dataset.json   # Test cases for evaluation
+│   │   └── eval_config.yaml         # Metrics configuration
 │   ├── integration/
 │   │   └── test_agent.py
 │   └── unit/
@@ -166,43 +166,34 @@ For more on adding tools, see the [ADK Tools documentation](https://google.githu
 
 ## 7. Run an Evaluation
 
-Evaluations validate that your agent behaves correctly. Your project comes with a default eval set at `tests/eval/evalsets/basic.evalset.json`:
+Evaluations validate that your agent behaves correctly. Your project comes with a default dataset at `tests/eval/datasets/basic-dataset.json`:
 
-```json title="tests/eval/evalsets/basic.evalset.json"
+```json title="tests/eval/datasets/basic-dataset.json"
 {
-  "eval_set_id": "basic_eval",
-  "name": "Basic Agent Evaluation",
   "eval_cases": [
     {
-      "eval_id": "greeting",
-      "conversation": [
-        {
-          "user_content": {
-            "parts": [{"text": "Hello, what can you help me with?"}]
-          }
-        }
-      ],
-      "session_input": {
-        "app_name": "app",
-        "user_id": "eval_user",
-        "state": {}
+      "eval_case_id": "greeting",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Hello, what can you help me with?"}]
       }
     }
   ]
 }
 ```
 
-Each eval case defines a user message and session context. The eval system sends the message to your agent and scores the response using LLM-as-judge criteria defined in `eval_config.json`.
+Each eval case defines a user message. The evaluation system sends the message to your agent and grades the response using metrics specified in `eval_config.yaml`.
 
 Run it:
 
 ```bash
-agents-cli eval run
+agents-cli eval generate
+agents-cli eval grade
 ```
 
-The output shows scores for each eval case against the configured rubrics (relevance, helpfulness). A score above the threshold (default: 0.8) passes.
+The output shows scores for each eval case against the configured metrics.
 
-For the full evaluation workflow — writing test cases, adding metrics, the eval-fix loop — see the [Evaluation Guide](evaluation.md).
+For the full evaluation workflow — writing test cases, adding metrics, the eval-fix loop, and the rest of the eval surface (`eval dataset synthesize`, `eval compare`, `eval analyze`, `eval metric list`, and `eval optimize`) — see the [Evaluation Guide](evaluation.md).
 
 ---
 
@@ -258,7 +249,7 @@ See the [Observability Guide](observability/index.md) for verification steps, fu
 | `agents-cli playground` | Started the ADK playground for interactive testing |
 | `agents-cli run "..."` | Tested the agent from the terminal |
 | Edited `agent.py` | Customized the persona and added a tool |
-| `agents-cli eval run` | Validated agent behavior with structured evaluations |
+| `agents-cli eval generate` followed by `agents-cli eval grade` | Validated agent behavior with structured evaluations |
 | `agents-cli deploy` | Deployed the agent to Google Cloud |
 | Trace explorer + content logs | Verified tracing and set up prompt-response logging |
 

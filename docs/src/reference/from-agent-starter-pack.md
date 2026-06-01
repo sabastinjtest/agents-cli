@@ -10,7 +10,7 @@
 
 **CLI replaces Makefile.** ASP used `make` targets (`make dev`, `make eval`, `make deploy`). agents-cli replaces them with a unified CLI covering the full lifecycle, with flags, help text, and structured output.
 
-**New capabilities.** agents-cli adds commands that didn't exist in ASP: `playground`, `run`, `deploy`, `eval run`, `eval compare`, `lint`, `login`, and skill management (`setup`, `update`).
+**New capabilities.** `agents-cli` adds commands that didn't exist in ASP: `playground`, `run`, `deploy`, the full eval surface (`eval generate`, `eval grade`, `eval dataset synthesize`, `eval compare`, `eval analyze`, `eval metric list`, `eval optimize`), `lint`, `login`, and skill management (`setup`, `update`).
 
 ### Command Mapping
 
@@ -81,3 +81,6 @@ agents-cli info
 ```
 
 This shows your project config and confirms agents-cli can read it. Your agent code, tests, Terraform, and CI/CD pipelines all work as before.
+
+!!! note "Existing eval cases under `tests/eval/evalsets/`?"
+    ASP's default agent template shipped a `basic.evalset.json` using the ADK `EvalSet` schema. The eval surface in agents-cli reads a different format from `tests/eval/datasets/`. See [Migrating Eval Datasets](eval-dataset-migration.md) for the conversion.

@@ -292,22 +292,22 @@
     {
       name: "Hallucinated tool result",
       what: "Agent claims it called a tool it never invoked, then quotes a fabricated result.",
-      caught: "tool_trajectory_avg_score — compares actual tool calls to the expected trajectory",
+      caught: "tool_use_quality — compares actual tool calls to the expected trajectory",
     },
     {
       name: "Ungrounded answer",
       what: "Agent's final response invents facts that aren't supported by what its tools returned.",
-      caught: "hallucinations_v1 — checks each claim in the response against tool-returned context",
+      caught: "hallucination — checks each claim in the response against tool-returned context",
     },
     {
       name: "Prompt-injection bypass",
       what: "User message smuggles instructions to override the safety rule.",
-      caught: "safety_v1 — pair with Model Armor on the prompt path for runtime defense",
+      caught: "safety — pair with Model Armor on the prompt path for runtime defense",
     },
     {
       name: "Persona drift",
       what: "Agent starts answering off-topic — chit-chat, generic advice — instead of investigating.",
-      caught: "rubric_based_final_response_quality_v1 — the 'relevance' rubric flags off-topic responses",
+      caught: "final_response_reference_free — grades whether the final response stays relevant to the user's question",
     },
   ];
 
@@ -678,7 +678,7 @@
 
     // Header
     host.appendChild(htmlEl("div", { class: "lc-eval__head" }, [
-      htmlEl("span", { class: "lc-mono" }, "$ agents-cli eval run --evalset basic.evalset.json"),
+      htmlEl("span", { class: "lc-mono" }, "$ agents-cli eval generate && agents-cli eval grade"),
       htmlEl("span", { class: "lc-muted" }, "3 cases"),
     ]));
 
@@ -693,7 +693,7 @@
         const dot = htmlEl("span", { class: "lc-eval__dot lc-eval__dot--" + (c.passing ? "pass" : "fail") });
         const main = htmlEl("div", { class: "lc-eval__main" });
         main.appendChild(htmlEl("div", { class: "lc-eval__meta" }, [
-          htmlEl("span", { class: "lc-mono lc-muted" }, "eval_id=" + c.id),
+          htmlEl("span", { class: "lc-mono lc-muted" }, "eval_case_id=" + c.id),
           htmlEl("span", { class: "lc-eval__pill lc-eval__pill--" + (c.passing ? "pass" : "fail") }, c.passing ? "PASS" : "FAIL"),
         ]));
         main.appendChild(htmlEl("p", { class: "lc-eval__prompt" }, '"' + c.prompt + '"'));

@@ -12,26 +12,26 @@ description: >
 metadata:
   author: Google
   license: Apache-2.0
-  version: 0.2.1
+  version: 0.3.0
   requires:
     bins:
       - agents-cli
     install: "uv tool install google-agents-cli"
 ---
 
-# ADK Cheatsheet
+# ADK Code Reference
 
 > **Before using this skill**, activate `/google-agents-cli-workflow` first — it contains the required development phases and scaffolding steps.
 
 ## Prerequisites
 
-1. Run `agents-cli info` — if it shows project config, skip to the cheatsheet below
+1. Run `agents-cli info` — if it shows project config, skip to the reference below
 2. If no project exists: run `agents-cli scaffold create <name>`
 3. If user has existing code: run `agents-cli scaffold enhance .`
 
 Do NOT write agent code until a project is scaffolded.
 
-> **Python only for now.** This cheatsheet currently covers the Python ADK SDK.
+> **Python only for now.** This reference currently covers the Python ADK SDK.
 > Support for other languages is coming soon.
 
 ## Quick Reference — Most Common Patterns
@@ -122,5 +122,5 @@ For the ADK docs index (titles and URLs for fetching documentation pages), use `
 
 - `/google-agents-cli-workflow` — Development workflow, coding guidelines, and operational rules
 - `/google-agents-cli-scaffold` — Project creation and enhancement with `agents-cli scaffold create` / `scaffold enhance`
-- `/google-agents-cli-eval` — Evaluation methodology, evalset schema, and the eval-fix loop
+- `/google-agents-cli-eval` — Evaluation methodology, dataset schema, and the eval-fix loop
 - `/google-agents-cli-deploy` — Deployment targets, CI/CD pipelines, and production workflows

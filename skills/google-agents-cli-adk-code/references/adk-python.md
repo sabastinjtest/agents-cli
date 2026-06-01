@@ -22,8 +22,8 @@ your_project_root/
 │   └── .env                # Environment variables
 ├── tests/
 │   ├── eval/
-│   │   ├── eval_config.json    # Eval criteria and thresholds
-│   │   └── evalsets/           # Eval datasets (JSON)
+│   │   ├── eval_config.yaml    # Eval criteria and thresholds
+│   │   └── datasets/           # Eval datasets (JSON)
 │   ├── integration/
 │   └── unit/
 └── pyproject.toml or requirements.txt
@@ -715,7 +715,7 @@ Hooks: `before/after_agent_callback`, `before/after_model_callback`, `before/aft
 
 ### Safety Guardrails
 
-Use `before_model_callback` to filter input or `after_model_callback` to filter output. Return `None` to pass through, or return a modified `LlmResponse` to block/replace. Evaluate with `safety_v1` criterion. [Full docs](https://adk.dev/safety/index.md)
+Use `before_model_callback` to filter input or `after_model_callback` to filter output. Return `None` to pass through, or return a modified `LlmResponse` to block/replace. Evaluate with the `safety` metric. [Full docs](https://adk.dev/safety/index.md)
 
 ---
 

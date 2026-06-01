@@ -90,19 +90,21 @@ Tell your coding agent:
 
 Your coding agent activates the `google-agents-cli-eval` skill and:
 
-- Creates `tests/eval/evalsets/caveman.evalset.json` with test cases (compression quality, technical term preservation, caveman tone)
-- Configures LLM-as-judge criteria in `tests/eval/eval_config.json`
+- Creates `tests/eval/datasets/caveman-dataset.json` with test cases (compression quality, technical term preservation, caveman tone)
 - Runs the evaluation:
 
-```
-agents-cli eval run
+```bash
+agents-cli eval generate
+agents-cli eval grade
 ```
 
 If cases fail, tell your coding agent what to fix:
 
 > *"The response to the greeting test is too polite. Make it more caveman."*
 
-Your coding agent adjusts the instruction, re-runs `agents-cli eval run`, and iterates until quality thresholds pass.
+Your coding agent adjusts the instruction, re-runs the evaluation, and iterates until quality thresholds pass.
+
+The eval surface goes beyond `generate` and `grade` — `eval dataset synthesize`, `eval compare`, `eval analyze`, and `eval optimize` cover synthetic case generation, regression diffing, failure clustering, and prompt auto-tuning. See the [Evaluation Guide](evaluation.md#beyond-generate-and-grade) for the full surface.
 
 ---
 
@@ -149,7 +151,7 @@ Here's what each prompt triggered under the hood:
 | You said | Your coding agent did |
 |----------|----------------------|
 | *"Build a caveman compressor agent"* | Scaffolded project, wrote agent code, tested locally |
-| *"Write evals and run them"* | Created evalset, configured LLM-as-judge, ran `agents-cli eval run` |
+| *"Write evals and run them"* | Created dataset, ran evaluation using `generate` and `grade` |
 | *"Deploy this to Cloud Run"* | Added deployment target, deployed to Cloud Run |
 | *"Set up observability"* | Provisioned service account, GCS bucket, and BigQuery dataset |
 

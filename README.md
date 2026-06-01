@@ -64,7 +64,7 @@ See the [full tutorial](https://google.github.io/agents-cli/guide/quickstart-tut
 | `google-agents-cli-workflow` | Development lifecycle, code preservation rules, model selection |
 | `google-agents-cli-adk-code` | ADK Python API — agents, tools, orchestration, callbacks, state |
 | `google-agents-cli-scaffold` | Project scaffolding — `create`, `enhance`, `upgrade` |
-| `google-agents-cli-eval` | Evaluation methodology — metrics, evalsets, LLM-as-judge, trajectory scoring |
+| `google-agents-cli-eval` | Evaluation methodology — metrics, datasets, LLM-as-judge, adaptive rubrics |
 | `google-agents-cli-deploy` | Deployment — [Agent Runtime](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale), [Cloud Run](https://cloud.google.com/run), [GKE](https://cloud.google.com/kubernetes-engine), CI/CD, secrets |
 | `google-agents-cli-publish` | Gemini Enterprise registration |
 | `google-agents-cli-observability` | Observability — Cloud Trace, logging, third-party integrations |
@@ -77,7 +77,8 @@ See the [full tutorial](https://google.github.io/agents-cli/guide/quickstart-tut
 |---------|-------------|
 | `agents-cli setup` | Install CLI + skills to coding agents |
 | `agents-cli scaffold <name>` | Create a new agent project |
-| `agents-cli eval run` | Run agent evaluations |
+| `agents-cli eval generate` | Run agent on eval dataset, produce traces |
+| `agents-cli eval grade` | Run agent evaluations on the traces |
 | `agents-cli deploy` | Deploy to Google Cloud |
 | `agents-cli publish gemini-enterprise` | Register with Gemini Enterprise |
 
@@ -97,8 +98,13 @@ See the [full tutorial](https://google.github.io/agents-cli/guide/quickstart-tut
 | `agents-cli install` | Install project dependencies |
 | `agents-cli lint` | Run code quality checks (Ruff) |
 | **Evaluate** | |
-| `agents-cli eval run` | Run agent evaluations |
+| `agents-cli eval generate` | Run agent inference over eval cases |
+| `agents-cli eval grade` | Grade generated traces against metrics |
+| `agents-cli eval dataset synthesize` | Synthesize multi-turn eval scenarios for your local agent |
 | `agents-cli eval compare` | Compare two eval result files |
+| `agents-cli eval analyze` | Cluster failure modes from grade results |
+| `agents-cli eval metric list` | List available metrics |
+| `agents-cli eval optimize` | Auto-tune agent prompts using eval data |
 | **Deploy & Publish** | |
 | `agents-cli deploy` | Deploy to Google Cloud |
 | `agents-cli publish gemini-enterprise` | Register with Gemini Enterprise |

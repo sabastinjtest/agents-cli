@@ -12,7 +12,7 @@ description: >
 metadata:
   author: Google
   license: Apache-2.0
-  version: 0.2.1
+  version: 0.3.0
   requires:
     bins:
       - agents-cli
@@ -25,8 +25,10 @@ metadata:
 
 **agents-cli** is a CLI and skills toolkit for building, evaluating, and deploying agents on Google Cloud using the [Agent Development Kit (ADK)](https://adk.dev/). It works with any coding agent — Gemini CLI, Claude Code, Codex, or others. Install with `uvx google-agents-cli setup`.
 
-> Requires: google-agents-cli ~= 0.2.1
-> If version is behind, run: uv tool install "google-agents-cli~=0.2.1"
+
+> Requires: google-agents-cli ~= 0.3.0
+> If version is behind, run: uv tool install "google-agents-cli~=0.3.0"
+
 > Check version: agents-cli info
 > [Install uv](https://docs.astral.sh/uv/getting-started/installation/index.md) first if needed.
 
@@ -40,7 +42,7 @@ Re-read the relevant skill **before** each phase — not after you've already st
 | 1 — Study samples | — | Check Notable Samples table below — clone and study matching samples before scaffolding |
 | 2 — Scaffold | `/google-agents-cli-scaffold` | Before creating or enhancing a project |
 | 3 — Build | `/google-agents-cli-adk-code` | Before writing agent code — API patterns, tools, callbacks, state |
-| 4 — Evaluate | `/google-agents-cli-eval` | Before running any eval — evalset schema, metrics, eval-fix loop |
+| 4 — Evaluate | `/google-agents-cli-eval` | Before running any eval — dataset schema, metrics, eval-fix loop |
 | 5 — Deploy | `/google-agents-cli-deploy` | Before deploying — target selection, troubleshooting 403/timeouts |
 | 6 — Publish | `/google-agents-cli-publish` | After deploying, if registering with Gemini Enterprise (optional) |
 | 7 — Observe | `/google-agents-cli-observability` | After deploying — traces, logging, monitoring setup |
@@ -182,7 +184,7 @@ If the user asks for interactive testing, suggest `agents-cli playground` — it
 
 For ADK API patterns and code examples, use `/google-agents-cli-adk-code`.
 
-> **NEVER write pytest tests that assert on LLM output content** (e.g., checking for keywords in responses, verifying persona, validating tone). LLM outputs are non-deterministic — these tests are flaky by nature and belong in eval, not pytest. Use `agents-cli run` for quick checks and `agents-cli eval run` for systematic validation.
+> **NEVER write pytest tests that assert on LLM output content** (e.g., checking for keywords in responses, verifying persona, validating tone). LLM outputs are non-deterministic — these tests are flaky by nature and belong in eval, not pytest. Use `agents-cli run` for quick checks and `agents-cli eval generate` followed by `agents-cli eval grade` for systematic validation.
 
 ## Phase 3.5: Provision Datastore (RAG projects only)
 
@@ -193,19 +195,19 @@ For `agentic_rag` projects, provision the datastore before testing: `agents-cli 
 **This is the most important phase.** Evaluation validates agent behavior end-to-end.
 
 **MANDATORY:** Activate `/google-agents-cli-eval` before running evaluation.
-It contains the evalset schema, config format, and critical gotchas. Do NOT skip this.
+It contains the dataset schema, config format, and critical gotchas. Do NOT skip this.
 
 **Do NOT skip this phase.** After building the agent, you MUST proceed to evaluation. Do NOT write pytest tests to validate agent behavior — that is what eval is for.
 
-**`uv run pytest` vs `agents-cli eval run` — know the difference:**
+**`uv run pytest` vs `agents-cli eval` — know the difference:**
 - **`uv run pytest`** — Tests *code correctness*: imports work, functions return expected types, API contracts hold. Does NOT test whether the agent behaves well.
-- **`agents-cli eval run`** — Tests *agent behavior*: response quality, tool usage, persona consistency, safety compliance. This is what validates your agent actually works.
+- **`agents-cli eval`** — Tests *agent behavior*: response quality, tool usage, persona consistency, safety compliance. This is what validates your agent actually works.
 - **`agents-cli run "prompt"`** — Quick one-off smoke test during development. If testing multiple prompts use the `--start-server` option to persist the local server, which reduces overhead for repeated calls and allows resuming local sessions via `--session-id`. Use this for fast iteration, not pytest.
 
 **NEVER write pytest tests that check LLM response content** (e.g., asserting pirate keywords appear, checking if the agent mentions allergies). LLM outputs are non-deterministic. Use eval with LLM-as-judge criteria instead.
 
 1. **Start small**: Begin with 1-2 sample eval cases, not a full suite
-2. Run evaluations: `agents-cli eval run`
+2. Run evaluations: `agents-cli eval run` (chains `generate` + `grade`). For debugging or custom trace locations, use the two-step form: `agents-cli eval generate` then `agents-cli eval grade`.
 3. Discuss results with the user
 4. Fix issues and iterate on the core cases first
 5. Only after core cases pass, add edge cases and new scenarios
@@ -377,10 +379,17 @@ When you need specific infrastructure files (Terraform, CI/CD, Dockerfile) but d
 
 | Command | Purpose |
 |---|---|
-| `agents-cli eval run` | Run evaluation against evalsets |
-| `agents-cli eval run --evalset F` | Run a specific evalset |
-| `agents-cli eval run --all` | Run all evalsets |
-| `agents-cli eval compare BASE CAND` | Compare two eval result files |
+| `agents-cli eval dataset synthesize` | Synthesize multi-turn eval scenarios for your agent (cold-start a dataset) |
+| `agents-cli eval generate` | Run agent inference over the default dataset, produce traces |
+| `agents-cli eval generate --dataset PATH` | Run inference for a specific dataset |
+| `agents-cli eval grade` | Grade traces with the metrics in `eval_config.yaml` |
+| `agents-cli eval grade --metrics METRIC` | Grade with a specific metric (overrides `eval_config.yaml`) |
+| `agents-cli eval metric list` | List built-in metrics available in the SDK |
+| `agents-cli eval compare BASE CAND` | Compare two grade-results files (regression check) |
+| `agents-cli eval analyze --eval-result RESULTS` | Cluster failure modes from a grade-results file |
+| `agents-cli eval optimize` | Auto-tune agent prompts using eval data |
+| `agents-cli eval submit --dataset D --dest gs://BUCKET` | Submit a managed cloud-side eval run on the Vertex AI Eval Service |
+| `agents-cli eval results --run-id ID` | Fetch status/results of a submitted cloud eval run |
 
 ### Deployment & Infrastructure
 
@@ -425,7 +434,7 @@ Use `agents-cli info` to discover the **CLI install path** — this is where the
 
 - `/google-agents-cli-scaffold` — Project creation, requirements gathering, and enhancement
 - `/google-agents-cli-adk-code` — ADK Python API quick reference and production sample agents
-- `/google-agents-cli-eval` — Evaluation methodology, evalset schema, and the eval-fix loop
+- `/google-agents-cli-eval` — Evaluation methodology, dataset schema, and the eval-fix loop
 - `/google-agents-cli-deploy` — Deployment targets, CI/CD pipelines, and production workflows
 - `/google-agents-cli-publish` — Gemini Enterprise registration
 - `/google-agents-cli-observability` — Cloud Trace, logging, BigQuery Analytics, and third-party integrations

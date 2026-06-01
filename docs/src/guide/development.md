@@ -76,15 +76,16 @@ Add and remove dependencies with [uv](https://docs.astral.sh/uv/):
 
 ## Phase 3: Evaluate
 
-Run structured evaluations to validate agent behavior. This uses the [ADK eval CLI](https://google.github.io/adk-docs/evaluate/) under the hood.
+Run structured evaluations to validate agent behavior. This uses the [GenAI Eval SDK](https://docs.cloud.google.com/gemini-enterprise-agent-platform/optimize/evaluation/agent-evaluation) under the hood.
 
 ```bash
-agents-cli eval run
+agents-cli eval generate
+agents-cli eval grade
 ```
 
 Expect **5-10+ iterations** of the eval-fix loop before your agent consistently passes. Start with 1-2 core eval cases, fix failures, then expand coverage.
 
-See the [Evaluation Guide](evaluation.md) for metrics, evalset schemas, and the full methodology.
+See the [Evaluation Guide](evaluation.md) for metrics, dataset schemas, and the full methodology.
 
 ---
 
