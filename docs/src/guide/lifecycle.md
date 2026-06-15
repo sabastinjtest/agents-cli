@@ -48,7 +48,7 @@ The loop expands to eight phases when you walk through it slowly. Each phase has
 
 ### 0 · Spec
 
-A `.agents-cli-spec.md` names the agent's tools, constraints, and success criteria. The whole rest of the lifecycle reads from it: the scaffold flags, the eval rubrics, the safety guardrails, the trace attributes you'll watch in production. Don't start from blank — browse [Agent Garden](https://cloud.google.com/products/agent-garden) for an existing template close to what you want, then customize.
+A `.agents-cli-spec.md` names the agent's tools, constraints, and success criteria. The whole rest of the lifecycle reads from it: the scaffold flags, the eval rubrics, the safety guardrails, the trace attributes you'll watch in production. Don't start from blank — browse [Agent Garden](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/agent-garden) for an existing template close to what you want, then customize.
 
 A typical spec is one screen of markdown:
 

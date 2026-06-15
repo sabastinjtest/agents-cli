@@ -12,7 +12,7 @@ description: >
 metadata:
   author: Google
   license: Apache-2.0
-  version: 0.4.0
+  version: 0.5.0
   requires:
     bins:
       - agents-cli
@@ -86,7 +86,7 @@ agents-cli publish gemini-enterprise \
 
 ### Via environment variables
 
-Every flag has an env var alternative:
+Most flags have an env var alternative (`--metadata-file`, `--interactive`, and `--list` do not):
 
 ```bash
 export AGENT_RUNTIME_ID="projects/123456/locations/us-east1/reasoningEngines/789"
@@ -126,6 +126,7 @@ agents-cli publish gemini-enterprise --interactive
 | `--authorization-id` | `GEMINI_AUTHORIZATION_ID` | OAuth authorization resource name |
 | `--metadata-file` | — | Path to deployment metadata (default: `deployment_metadata.json`) |
 | `--interactive` / `-i` | — | Enable interactive prompts |
+| `--list` | — | List Gemini Enterprise apps in the current project and exit |
 
 ---
 
@@ -160,7 +161,7 @@ Agent Runtime deployments may encounter "Session not found" errors with `google-
 | "Session not found" after registration | SDK version issue — upgrade `google-cloud-aiplatform` (see SDK Compatibility above), redeploy, then re-register |
 | `--registration-type is required` | Non-interactive mode needs `--registration-type` when no `deployment_metadata.json` exists |
 | "Gemini Enterprise App ID is required" | Provide `--gemini-enterprise-app-id` or set the `ID` / `GEMINI_ENTERPRISE_APP_ID` env var |
-| "Agent already registered" | The command automatically updates the existing registration — this is not an error |
+| Re-publishing the same agent | Registration is idempotent — re-running updates the existing registration in place instead of creating a duplicate |
 | HTTP 403 on registration | Check that your account has Discovery Engine Editor permissions on the Gemini Enterprise project |
 | "Could not fetch agent card" | Verify the agent is running and the URL is correct; for Cloud Run, ensure `gcloud auth login` is done |
 

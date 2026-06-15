@@ -12,7 +12,7 @@ description: >
 metadata:
   author: Google
   license: Apache-2.0
-  version: 0.4.0
+  version: 0.5.0
   requires:
     bins:
       - agents-cli
@@ -101,6 +101,7 @@ agents-cli infra single-project
 | `--project` | GCP project ID | All |
 | `--region` | GCP region | All |
 | `--service-account` | Service account email for the deployed agent | All |
+| `--service-name` | Override the deployed service name (Cloud Run service or Agent Runtime display name); defaults to the project name. If you override it, consider updating your Terraform and CI (if present) — they name resources from the project name. Not supported for GKE, whose names are fully owned by Terraform. | Agent Runtime, Cloud Run |
 | `--secrets` | Comma-separated `ENV=SECRET` or `ENV=SECRET:VERSION` pairs | Agent Runtime, Cloud Run |
 | `--update-env-vars` | Comma-separated `KEY=VALUE` environment variables | Agent Runtime, Cloud Run |
 | `--agent-identity` | Enable [agent identity](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/agent-identity) (Preview) | Agent Runtime |
@@ -108,7 +109,12 @@ agents-cli infra single-project
 | `--dns-peering-domain` | DNS peering domain suffix, e.g. `my-internal.corp.` (requires `--network-attachment`) | Agent Runtime |
 | `--dns-peering-project` | Project ID hosting the Cloud DNS managed zone for DNS peering (requires `--network-attachment`) | Agent Runtime |
 | `--dns-peering-network` | VPC network name in the target project for DNS peering (requires `--network-attachment`) | Agent Runtime |
-| `--memory` | Memory limit (default: `4Gi`) | Cloud Run |
+| `--memory` | Memory limit (default: `4Gi`) | Agent Runtime, Cloud Run |
+| `--cpu` | CPU limit (default: `1`) | Agent Runtime, Cloud Run |
+| `--min-instances` | Minimum number of instances (default: `1`) | Agent Runtime, Cloud Run |
+| `--max-instances` | Maximum number of instances (default: `10`) | Agent Runtime, Cloud Run |
+| `--concurrency` | Concurrent requests per container (default: `8`; see [Sizing a deployment](#sizing-a-deployment)) | Agent Runtime, Cloud Run |
+| `--num-workers` | Worker processes per container (default: `1`) | Agent Runtime |
 | `--port` | Container port | Cloud Run |
 | `--iap` | Enable Identity-Aware Proxy | Cloud Run |
 | `--image` | Container image URI (skips source build) | Cloud Run, GKE |
@@ -123,6 +129,27 @@ Run `agents-cli deploy --help` for the full flag reference.
 > **Advanced Cloud Run Deploys:** If you need features not exposed via `agents-cli` flags, use `--dry-run` (or `-n`) to print the full `gcloud` command, copy it, and add additional arguments as needed.
 
 > **Project Confirmation:** If the project is resolved automatically (not passed via `--project`), the command will prompt for confirmation in interactive mode. Since agents typically run in non-interactive mode, you MUST pass `--no-confirm-project` to proceed if you are relying on automatic project resolution.
+
+---
+
+## Sizing a deployment
+
+Defaults (same on Agent Runtime, Cloud Run, and the generated `service.tf`): `--cpu 1`, `--memory 4Gi`, `--num-workers 1`, `--concurrency 8`, `--min-instances 1`, `--max-instances 10`.
+
+The params are coupled — scale them together:
+
+- **Workers = vCPUs.** Each worker is one GIL-bound process that saturates one core, so raise `--num-workers` with `--cpu` (e.g. `--cpu 4` → `--num-workers 4`) or you pay for idle cores.
+- **Memory bounds concurrency.** Each concurrent request keeps its full working set (context window, history, RAG chunks, response buffer) in memory while it waits on the model, so peak ≈ base + `concurrency × per-request memory`. Memory — not CPU — is the first limit, so raising `--concurrency` without `--memory` is the main OOM cause.
+- **Concurrency default is conservative.** An async worker can serve many concurrent requests while it waits on the model, but per-request memory is agent-specific, so `8` protects a memory-heavy (RAG/multimodal) agent. Light agents can raise it to 16–32+ after load-testing. See [Underutilized asynchronous workers](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/runtime/optimize-and-scale#underutilized-workers).
+
+```bash
+# 4x throughput: scale every param, not just one
+agents-cli deploy --cpu 4 --num-workers 4 --concurrency 16 --memory 16Gi
+```
+
+**Tune with the scaffolded load test** (`tests/load_test/`, run locally or in the CI/CD staging pipeline): drive load, watch *max* latency and memory/OOM restarts, then adjust — high max latency → raise concurrency (+ workers/cpu); OOM → raise memory or lower concurrency.
+
+> `--num-workers` is Agent-Runtime-only (Cloud Run runs one uvicorn process). On **GKE** these flags are rejected — size via the Terraform manifests + HorizontalPodAutoscaler under `deployment/terraform/`.
 
 ---
 

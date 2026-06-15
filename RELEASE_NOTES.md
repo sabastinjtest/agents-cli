@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2026-06-15
+- chore(deps): bump @grpc/grpc-js
+- Update publish script to mirror and publish source
+- Smart fixture to find tests broken by pyfakefs / patching conflicts
+- fix: don't tear down a reused local server on a plain run
+- fix: upgrade builds the prior-version template via uvx
+- docs: fix pre-existing inaccuracies in skills and generated READMEs
+- Make publish script a bit more robust
+- fix: only announce the project root when chdir actually moves
+- feat: print a copy-pasteable resume command in the run session footer
+- feat: surface machine-shape params as deploy flags (Agent Runtime + Cloud Run)
+- feat(deploy): add --service-name override
+- Refactor for more consistent project resolution
+- fix: drain npx stderr concurrently to avoid pipe-buffer deadlock
+- docs: codify recurring review feedback in agent guidance
+- Clean up remaining adk_live stuff
+
 ## [0.4.0] - 2026-06-10
 - Scaffolded Python templates now use **ADK 2.0 GA**. New `adk`, `adk_a2a`, and `agentic_rag` projects pin `google-adk[gcp]>=2.0.0,<3.0.0`; the `[gcp]` extra restores the OpenTelemetry GCP exporters and bundles the BigQuery client, so the separate `[bigquery-analytics]` extra is no longer needed. Cloud SQL sessions on Cloud Run and GKE keep working under 2.0. The bundled ADK coding skill and its reference docs were refreshed for 2.0.
   - https://github.com/google/agents-cli/issues/24

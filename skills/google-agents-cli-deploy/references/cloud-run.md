@@ -4,9 +4,11 @@
 
 ## Scaling & Resource Defaults
 
-Agents CLI scaffolds Cloud Run infrastructure in `deployment/terraform/service.tf`. Check that file for current resource limits, scaling configuration, concurrency, and session affinity settings.
+Agents CLI scaffolds Cloud Run infrastructure in `deployment/terraform/single-project/service.tf` (and the `cicd/` variant). Check that file for current resource limits, scaling configuration, concurrency, and session affinity settings.
 
 Key settings to be aware of: `cpu_idle` (CPU allocation strategy), `min_instance_count` (cold start avoidance), `max_instance_request_concurrency` (concurrency per instance), and `session_affinity` (sticky routing).
+
+For how to size cpu/memory/workers/concurrency together (and avoid OOM), see **Sizing a deployment** in the `/google-agents-cli-deploy` skill.
 
 ## Dockerfile
 
@@ -24,7 +26,7 @@ Available endpoints vary by project template. Check `app/fast_api_app.py` for th
 | **Cloud SQL** | `--session-type cloud_sql` at scaffold time | Production persistent sessions (Postgres 15, IAM auth) |
 | **Agent Runtime** | `session_service_uri = agentengine://{resource_name}` | When using Agent Runtime as session backend |
 
-Cloud SQL session infrastructure (instance, database, Cloud SQL Unix socket volume mount) is configured in `deployment/terraform/service.tf`.
+Cloud SQL session infrastructure (instance, database, Cloud SQL Unix socket volume mount) is configured in `deployment/terraform/single-project/service.tf`.
 
 > **Manual Deployment Warning:** When using Cloud SQL without Terraform (e.g., direct `gcloud run deploy` with `--add-cloudsql-instances`), you MUST manually grant `roles/cloudsql.client` to the runtime service account, otherwise the connection will fail with authorization errors.
 
